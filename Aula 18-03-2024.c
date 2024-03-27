@@ -12,9 +12,42 @@ typedef struct{
 
 pessoa variavel[1299];
 
+void buscaBinariaIndice(pessoa *p, int n, int indice){
+
+    FILE *arquivo = fopen("..//NomesOrdenados.txt","r");
+
+    int inicio = 0;
+    int fim = n-1;
+    int meio;
+    int contador = 0;
+    pessoa pessoaArquivo;
+
+    while(inicio <= fim){
+        meio = (inicio + fim) / 2;
+        fseek(arquivo, meio * sizeof(pessoa), SEEK_SET);
+        fscanf(arquivo,"%s %d", pessoaArquivo.nome, &pessoaArquivo.indice);
+        contador++;
+        if(pessoaArquivo.indice == indice){
+            printf("Nome encontrado: %s; Seu indice : %d\n", pessoaArquivo.nome, pessoaArquivo.indice);
+            printf("Numero de interacoes: %d\n", contador);
+            return;
+        }
+        else if(pessoaArquivo.indice < indice){
+            inicio = meio + 1;
+        }
+        else{
+            fim = meio - 1;
+        }
+    }
+
+    printf("Indice nao encontrado\n");
+    printf("Numero de interacoes: %d\n", contador);
+    fclose(arquivo);
+}
+
 void buscaSequencialIndice(pessoa *p, int n, int indice){
 
-    FILE *arquivo = fopen("NomesDesordenados.txt","r");
+    FILE *arquivo = fopen("..//NomesDesordenados.txt","r");
 
     int i;
     int contador = 0;
@@ -30,12 +63,14 @@ void buscaSequencialIndice(pessoa *p, int n, int indice){
     }
 
     printf("Indice nao encontrado\n");
-    printf("Numero de iteracoes: %d\n", contador);
+    printf("Numero de interacoes: %d\n", contador);
+
+    fclose(arquivo);
 }
 
 void buscaSequencialNome(pessoa *p, int n, char *nome){
 
-    FILE *arquivo = fopen("NomesDesordenados.txt","r");
+    FILE *arquivo = fopen("..//NomesDesordenados.txt","r");
 
     int i;
     int contador = 0;
@@ -52,6 +87,38 @@ void buscaSequencialNome(pessoa *p, int n, char *nome){
 
     printf("Nome nao encontrado!\n");
     printf("Numero de interacoes: %d\n", contador);
+
+    fclose(arquivo);
+}
+
+void ordena(pessoa *p, int n){
+
+    FILE *arquivo = fopen("..//Nomes.txt","r");
+    FILE *arquivoOrdenado = fopen("..//NomesOrdenados.txt","w");
+
+    if (arquivoOrdenado == NULL)
+        return;
+
+    if (arquivo == NULL)
+        return;
+
+    int i=0;
+
+    for (i = 0; i < 1299; i++) {
+        fscanf(arquivo, "%s", variavel[i].nome);
+    }
+
+    for(i = 0; i < 1299; i++){
+        variavel[i].indice = i+1;
+    }
+
+    for(i = 0; i < 1299; i++){
+        fprintf(arquivoOrdenado,"%s %d\n",variavel[i].nome,variavel[i].indice);
+    }
+
+    fclose(arquivo);
+    fclose(arquivoOrdenado);
+
 }
 
 void desordena(pessoa *p, int n){
@@ -91,7 +158,7 @@ void desordena(pessoa *p, int n){
 }
 
 int main() {
-
+    ordena(variavel,1299);
     desordena(variavel,1299);
 
     char nome[100];
@@ -108,7 +175,11 @@ int main() {
         printf("Indice invalido!\n");
         return 0;
     }
+
+    printf("\nBusca sequencial:\n");
     buscaSequencialIndice(variavel,1299,indice);
 
+    printf("\nBusca binaria:\n");
+    buscaBinariaIndice(variavel,1299,indice);
     return 0;
 }
